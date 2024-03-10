@@ -5,5 +5,8 @@ from .esquemas import *
 
 @strawberry.type
 class Query:
-    reservas: typing.List[Reserva] = strawberry.field(
-        resolver=obtener_reservas)
+    catastros: typing.List[Catastro] = strawberry.field(
+        resolver=obtener_catastros)
+
+    contratos: typing.List[Contrato] = strawberry.field(
+        resolver=obtener_contratos)

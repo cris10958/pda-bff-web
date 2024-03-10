@@ -1,57 +1,69 @@
 import typing
 import strawberry
-import uuid
 import requests
 import os
+import uuid
 
 from datetime import datetime
 
 
-AEROALPES_HOST = os.getenv("AEROALPES_ADDRESS", default="localhost")
-FORMATO_FECHA = '%Y-%m-%dT%H:%M:%SZ'
+PDA_CATASTRO_URL = os.getenv(
+    "PDA_CATASTRO_URL", default="http://127.0.0.1:3000/catastros")
+PDA_CONTRATO_URL = os.getenv(
+    "PDA_CONTRATO_URL", default="http://127.0.0.1:3000/contratos")
 
 
-def obtener_reservas(root) -> typing.List["Reserva"]:
-    reservas_json = requests.get(
-        f'http://{AEROALPES_HOST}:5000/vuelos/reserva').json()
-    reservas = []
+def obtener_catastros(root) -> typing.List["Catastro"]:
+    print('Consultando catastros')
+    catastros_json = requests.get(PDA_CATASTRO_URL).json()
+    catastros = []
 
-    for reserva in reservas_json:
-        reservas.append(
-            Reserva(
-                fecha_creacion=datetime.strptime(
-                    reserva.get('fecha_creacion'), FORMATO_FECHA),
-                fecha_actualizacion=datetime.strptime(
-                    reserva.get('fecha_actualizacion'), FORMATO_FECHA),
-                id=reserva.get('id'),
-                id_usuario=reserva.get('id_usuario', '')
-            )
+    for catastro in catastros_json:
+        catastros.append(
+            Catastro(
+                id_propiedad=catastro.get('id_propiedad'),
+                numero_catastro=catastro.get('numero_catastro'),
+                fecha_creacion=catastro.get('fecha_creacion'),
+                fecha_actualizacion=catastro.get('fecha_actualizacion'))
         )
 
-    return reservas
+    return catastros
 
 
-@strawberry.type
-class Itinerario:
-    # TODO Completar objeto strawberry para incluir los itinerarios
-    ...
+def obtener_contratos(root) -> typing.List["Contrato"]:
+    print('Consultando contratos')
+    contratos_json = requests.get(PDA_CONTRATO_URL).json()
+    contratos = []
 
+    for contrato in contratos_json:
+        contratos.append(
+            Contrato(
+                id_propiedad=contrato.get('id_propiedad'),
+                numero_contrato=contrato.get('numero_contrato'),
+                fecha_creacion=contrato.get('fecha_creacion'),
+                fecha_actualizacion=contrato.get('fecha_actualizacion'))
+        )
 
-@strawberry.type
-class Reserva:
-    id: str
-    id_usuario: str
-    fecha_creacion: datetime
-    fecha_actualizacion: datetime
-    # itinerarios: typing.List[Itinerario]
+    return contratos
 
-
-@strawberry.type
-class ReservaRespuesta:
-    mensaje: str
-    codigo: int
 
 @strawberry.type
 class PropiedadRespuesta:
     mensaje: str
     codigo: int
+
+
+@strawberry.type
+class Catastro:
+    id_propiedad: str
+    numero_catastro: str
+    fecha_creacion: str
+    fecha_actualizacion: str
+
+
+@strawberry.type
+class Contrato:
+    id_propiedad: str
+    numero_contrato: str
+    fecha_creacion: str
+    fecha_actualizacion: str
