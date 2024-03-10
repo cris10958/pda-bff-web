@@ -24,7 +24,7 @@ class Config(BaseSettings):
 
 
 settings = Config()
-app_configs: dict[str, Any] = {"title": "BFF-Web AeroAlpes"}
+app_configs: dict[str, Any] = {"title": "BFF-Web PDA"}
 
 app = FastAPI(**app_configs)
 tasks = list()
@@ -35,14 +35,17 @@ eventos = list()
 async def app_startup():
     global tasks
     global eventos
-    task1 = asyncio.ensure_future(suscribirse_a_topico(
-        "eventos-reserva", "aeroalpes-bff", "public/default/eventos-reserva", eventos=eventos))
-    tasks.append(task1)
+    print("Iniciando BFF Web")
+
+    # task1 = asyncio.ensure_future(suscribirse_a_topico(
+    #     "eventos-reserva", "aeroalpes-bff", "public/default/eventos-reserva", eventos=eventos))
+    # tasks.append(task1)
 
 
 @app.on_event("shutdown")
 def shutdown_event():
     global tasks
+    print("Apagando BFF Web")
     for task in tasks:
         task.cancel()
 

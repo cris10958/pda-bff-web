@@ -50,3 +50,8 @@ class Reserva:
 class ReservaRespuesta:
     mensaje: str
     codigo: int
+
+@strawberry.type
+class PropiedadRespuesta:
+    mensaje: str
+    codigo: int

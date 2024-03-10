@@ -6,31 +6,36 @@ from src.bff_web.despachadores import Despachador
 
 from .esquemas import *
 
+SCHEMA = "public/default/"
+COMANDO_CREAR_PROPIEDAD = "ComandoCrearPropiedad"
+TOPICO_COMANDO_CREAR_PROPIEDAD = 'comandos-crear-propiedad'
+SCHEMA_COMANDO_CREAR_PROPIEDAD = f'{SCHEMA}{TOPICO_COMANDO_CREAR_PROPIEDAD}'
+
 
 @strawberry.type
 class Mutation:
 
-    # TODO Agregue objeto de itinerarios o reserva
     @strawberry.mutation
-    async def crear_reserva(self, id_usuario: str, id_correlacion: str, info: Info) -> ReservaRespuesta:
-        print(f"ID Usuario: {id_usuario}, ID Correlación: {id_correlacion}")
+    async def crear_propiedad(self, id_propiedad: str, info: Info) -> PropiedadRespuesta:
+        print(f"Mutacion crear propiedad ID: {id_propiedad}")
+
         payload = dict(
-            id_usuario=id_usuario,
-            id_correlacion=id_correlacion,
-            fecha_creacion=utils.time_millis()
+            id_propiedad=id_propiedad,
         )
+
         comando = dict(
             id=str(uuid.uuid4()),
             time=utils.time_millis(),
             specversion="v1",
-            type="ComandoReserva",
+            type=COMANDO_CREAR_PROPIEDAD,
             ingestion=utils.time_millis(),
             datacontenttype="AVRO",
             service_name="BFF Web",
             data=payload
         )
+
         despachador = Despachador()
         info.context["background_tasks"].add_task(
-            despachador.publicar_mensaje, comando, "comando-crear-reserva", "public/default/comando-crear-reserva")
+            despachador.publicar_mensaje, comando, TOPICO_COMANDO_CREAR_PROPIEDAD, SCHEMA_COMANDO_CREAR_PROPIEDAD)
 
-        return ReservaRespuesta(mensaje="Procesando Mensaje", codigo=203)
+        return PropiedadRespuesta(mensaje="Creando propiedad", codigo=203)
