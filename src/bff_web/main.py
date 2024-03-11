@@ -30,22 +30,36 @@ app = FastAPI(**app_configs)
 tasks = list()
 eventos = list()
 
+SCHEMA = "public/default/"
+
+EVENTO_AUDITORIA_CREADA = 'eventos-auditoria-creada'
+SUB_EVENTO_AUDITORIA_CREADA_BFF = 'sub-eventos-auditoria-creada-bff'
+SCHEMA_EVENTO_AUDITORIA_CREADA = f'{SCHEMA}{EVENTO_AUDITORIA_CREADA}'
+
+EVENTO_PROPIEDAD_FALLIDA = 'eventos-propiedad-fallida'
+SUB_EVENTO_PROPIEDAD_FALLIDA_BFF = 'sub-eventos-propiedad-fallida-bff'
+SCHEMA_EVENTO_PROPIEDAD_FALLIDA = f'{SCHEMA}{EVENTO_PROPIEDAD_FALLIDA}'
+
 
 @app.on_event("startup")
 async def app_startup():
     global tasks
     global eventos
-    print("Iniciando BFF Web")
+    print("Iniciando PDA BFF Web")
 
-    # task1 = asyncio.ensure_future(suscribirse_a_topico(
-    #     "eventos-reserva", "aeroalpes-bff", "public/default/eventos-reserva", eventos=eventos))
-    # tasks.append(task1)
+    task1 = asyncio.ensure_future(suscribirse_a_topico(
+        EVENTO_AUDITORIA_CREADA, SUB_EVENTO_AUDITORIA_CREADA_BFF, SCHEMA_EVENTO_AUDITORIA_CREADA, eventos=eventos))
+    task2 = asyncio.ensure_future(suscribirse_a_topico(
+        EVENTO_PROPIEDAD_FALLIDA, SUB_EVENTO_PROPIEDAD_FALLIDA_BFF, SCHEMA_EVENTO_PROPIEDAD_FALLIDA, eventos=eventos))
+    
+    tasks.append(task1)
+    tasks.append(task2)
 
 
 @app.on_event("shutdown")
 def shutdown_event():
     global tasks
-    print("Apagando BFF Web")
+    print("Apagando PDA BFF Web")
     for task in tasks:
         task.cancel()
 

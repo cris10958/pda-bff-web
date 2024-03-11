@@ -17,7 +17,7 @@ class Mutation:
 
     @strawberry.mutation
     async def registrar_propiedad(self, id_propiedad: str, info: Info) -> PropiedadRespuesta:
-        print(f"Mutacion crear propiedad ID: {id_propiedad}")
+        print(f"Mutacion registrar propiedad ID: {id_propiedad}")
 
         payload = dict(
             id_propiedad=id_propiedad,
