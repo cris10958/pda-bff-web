@@ -32,13 +32,9 @@ eventos = list()
 
 SCHEMA = "public/default/"
 
-EVENTO_AUDITORIA_CREADA = 'eventos-auditoria-creada'
-SUB_EVENTO_AUDITORIA_CREADA_BFF = 'sub-eventos-auditoria-creada-bff'
-SCHEMA_EVENTO_AUDITORIA_CREADA = f'{SCHEMA}{EVENTO_AUDITORIA_CREADA}'
-
-EVENTO_PROPIEDAD_FALLIDA = 'eventos-propiedad-fallida'
-SUB_EVENTO_PROPIEDAD_FALLIDA_BFF = 'sub-eventos-propiedad-fallida-bff'
-SCHEMA_EVENTO_PROPIEDAD_FALLIDA = f'{SCHEMA}{EVENTO_PROPIEDAD_FALLIDA}'
+EVENTO_SAGA_TERMINADA = 'saga_propiedades_terminada'
+SUB_EVENTO_SAGA_TERMINADA_BFF = 'sub-saga_propiedades_terminada-bff'
+SCHEMA_EVENTO_SAGA_TERMINADA = f'{SCHEMA}{EVENTO_SAGA_TERMINADA}'
 
 
 @app.on_event("startup")
@@ -48,12 +44,9 @@ async def app_startup():
     print("Iniciando PDA BFF Web")
 
     task1 = asyncio.ensure_future(suscribirse_a_topico(
-        EVENTO_AUDITORIA_CREADA, SUB_EVENTO_AUDITORIA_CREADA_BFF, SCHEMA_EVENTO_AUDITORIA_CREADA, eventos=eventos))
-    task2 = asyncio.ensure_future(suscribirse_a_topico(
-        EVENTO_PROPIEDAD_FALLIDA, SUB_EVENTO_PROPIEDAD_FALLIDA_BFF, SCHEMA_EVENTO_PROPIEDAD_FALLIDA, eventos=eventos))
-    
+        EVENTO_SAGA_TERMINADA, SUB_EVENTO_SAGA_TERMINADA_BFF, SCHEMA_EVENTO_SAGA_TERMINADA, eventos=eventos))
+
     tasks.append(task1)
-    tasks.append(task2)
 
 
 @app.on_event("shutdown")

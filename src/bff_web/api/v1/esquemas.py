@@ -10,7 +10,7 @@ from datetime import datetime
 PDA_CATASTRO_URL = os.getenv(
     "PDA_CATASTRO_URL", default="http://127.0.0.1:3000/catastros")
 PDA_CONTRATO_URL = os.getenv(
-    "PDA_CONTRATO_URL", default="http://127.0.0.1:3000/contratos")
+    "PDA_CONTRATO_URL", default="http://127.0.0.1:3002/contratos")
 
 
 def obtener_catastros(root) -> typing.List["Catastro"]:
@@ -34,11 +34,10 @@ def obtener_contratos(root) -> typing.List["Contrato"]:
     print('Consultando contratos')
     contratos_json = requests.get(PDA_CONTRATO_URL).json()
     contratos = []
-
     for contrato in contratos_json:
         contratos.append(
             Contrato(
-                id_propiedad=contrato.get('id_propiedad'),
+                id_propiedad=contrato.get('propiedad_id'),
                 numero_contrato=contrato.get('numero_contrato'),
                 fecha_creacion=contrato.get('fecha_creacion'),
                 fecha_actualizacion=contrato.get('fecha_actualizacion'))
